@@ -27,50 +27,46 @@ const fs = require('fs/promises');
     const deleteFile = async (path) => {
         console.log(`Deleting ${path}`);
         try {
-            // check if the file for deleting exist
-            const existingFileHandle = await fs.open(path, 'r');
-            existingFileHandle.close();
-
             await fs.rm(path);
-
-            return console.log(`The file ${path} has been successfully deleted.`)
-
-            // return console.log(`The file ${path} doesn\'t exist.`);
+            console.log(`The file ${path} has been successfully deleted.`)
         } catch (e) {
-            return console.log(`The file ${path} doesn\'t exist.`);
+            if (e.code === 'ENOENT') {
+                console.error(`The file ${path} doesn\'t exist.`);
+            } else {
+                console.error('Error deleting file: ');
+                console.error(e);
+            }
         }
     }
-
 
     const renameFile = async (oldPath, newPath) => {
         console.log(`Rename ${oldPath} to ${newPath}`);
         try {
-            // check if the file for deleting exist
-            const existingFileHandle = await fs.open(oldPath, 'r');
-            existingFileHandle.close();
-
             await fs.rename(oldPath, newPath);
-
-            return console.log(`The file ${path} has been successfully renamed to ${newPath}`);
+            console.log(`The file ${path} has been successfully renamed to ${newPath}`);
         } catch (e) {
-            return console.log(`The file you are trying to rename doesn\'t exist.`)
+            if (e.code === 'ENOENT') {
+                console.error(`The file you are trying to rename doesn\'t exist.`)
+            } else {
+                console.error('Error renaming file: ');
+                console.error(e);
+            }
         }
     }
-
 
     const addToFile = async (path, content) => {
         console.log(`Adding to ${path}`);
         console.log(`Content: ${content}`);
         try {
-            // check if the file for deleting exist
-            const existingFileHandle = await fs.open(path, 'r');
-            existingFileHandle.close();
-            
-            await fs.writeFile(path, Buffer.from(content));
-
-            return console.log(`Content has been successfully added.`)
+            await fs.appendFile(path, Buffer.from(content));
+            console.log(`Content has been successfully added.`)
         } catch (e) {
-            return console.log(`The file ${path} doesn\'t exist.`);
+            if (e.code === 'ENOENT') {
+                console.error(`The file ${path} doesn\'t exist.`);
+            } else {
+                console.error('Error add to file: ');
+                console.error(e);
+            }
         }
     }
 
@@ -133,8 +129,6 @@ const fs = require('fs/promises');
             const _idx = command.indexOf(' this content: ');
             const filePath = command.substring(ADD_TO_FILE.length  + 1, _idx);
             const content = command.substring(_idx + 15);
-
-            console.log('-----', filePath)
 
             addToFile(filePath, content);
         }

@@ -1,1 +1,1 @@
-add to the file data.json this content: [{"name": "Stas", "age": 25}]
+add to the file testing this content: asdf
